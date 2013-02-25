@@ -1,0 +1,26 @@
+{
+  "name": "samples-api",
+  "version": "0.0.0",
+  "description": "Data APIs used by RaptorJS sample apps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/raptorjs/samples-api.git"
+  },
+  "author": "",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "554f6353d3e05c79c36f3fb12b961259b10e7742",
+  "dependencies": {
+    "raptor": "~2.2.4",
+    "restify": "~2.2.1",
+    "request": "~2.14.0"
+  },
+  "engines": {
+    "node": "0.8.x",
+    "npm":  "1.1.x"
+  }
+}
