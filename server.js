@@ -24,10 +24,10 @@ var server = restify.createServer({
     name: 'raptorjs-samples-api',
 });
 
-server.use(restify.queryParser());
-server.use(restify.jsonp());
+server.use(restify.queryParser()); // Required to make query string parameters available in the req.params object
+server.use(restify.jsonp()); // Enable JSONP detection (?callback=?)
 
-function findItemsAdvanced(req, resp) {
+function findItemsAdvanced(req, resp, next) {
     var keywords = req.params.keywords,
         categoryId = req.params.category,
         callback = req.params.callback;
@@ -43,9 +43,11 @@ function findItemsAdvanced(req, resp) {
     request.get(url, function (error, findingResponse, findingBody) {
         var fail = function() {
             findingResponse.send(500, 'eBay finding API call failed');
+            return next();
         }
 
         if (!error && findingResponse.statusCode == 200) {
+            // Massage the data that comes from the origin eBay service
             var outputItems = [],
                 items = JSON.parse(findingBody).findItemsAdvancedResponse[0].searchResult[0].item,
                 item,
@@ -67,28 +69,18 @@ function findItemsAdvanced(req, resp) {
             }
 
             resp.send(output);
-            
+            return next();
         }
         else {
             fail();
         }
+
     });
 }
 
- server.get('/ebay/finding/keywords/:keywords/category/:category', function create(req, resp, next) {
-    findItemsAdvanced(req, resp);
-    return next();
- });
-
-server.get('/ebay/finding/keywords/:keywords', function create(req, resp, next) {
-    findItemsAdvanced(req, resp);
-    return next();
-});
-
-server.get('/ebay/finding/category/:category', function create(req, resp, next) {
-    findItemsAdvanced(req, resp);
-    return next();
-});
+server.get('/ebay/finding/keywords/:keywords/category/:category', findItemsAdvanced);
+server.get('/ebay/finding/keywords/:keywords', findItemsAdvanced);
+server.get('/ebay/finding/category/:category', findItemsAdvanced);
 
 server.listen(port);
 
