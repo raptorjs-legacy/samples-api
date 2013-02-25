@@ -53,7 +53,7 @@ function findItemsAdvanced(req, resp) {
                 len=items.length;
 
             for (; i<len; i++) {
-                item = items[0];
+                item = items[i];
 
                 outputItems.push({
                     title: item.title[0],
