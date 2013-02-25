@@ -29,8 +29,7 @@ server.use(restify.jsonp()); // Enable JSONP detection (?callback=?)
 
 function findItemsAdvanced(req, resp, next) {
     var keywords = req.params.keywords,
-        categoryId = req.params.category,
-        callback = req.params.callback;
+        categoryId = req.params.category;
 
     var url = 'http://svcs.ebay.com/services/search/FindingService/v1?OPERATION-NAME=findItemsAdvanced&SERVICE-VERSION=1.0.0&SECURITY-APPNAME=' + ebayAppId + '&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD';
     if (keywords) {
