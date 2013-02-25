@@ -1,15 +1,24 @@
 var restify = require('restify');
 var request = require('request');
 var fs = require('fs');
+var port = process.env.PORT || 5000;
 
-if (!fs.existsSync('local.json')) {
-    console.error('local.json not found in current working directory. See local-sample.json for example of what this file should contain.');
-    return;
+
+var ebayAppId = process.env.eBay_AppID;
+if (!ebayAppId) {
+    if (!fs.existsSync('local.json')) {
+        console.error('local.json not found in current working directory. See local-sample.json for example of what this file should contain.');
+        return;
+    }
+
+    var localProps = JSON.parse(fs.readFileSync('local.json'));
+    ebayAppId = localProps.ebay.AppID;
+
+    if (!ebayAppId) {
+        console.error('ebay.AppID not defined in local.json');
+        return;
+    }
 }
-
-var localProps = JSON.parse(fs.readFileSync('local.json'));
-var ebayAppId = localProps.ebay.AppID;
-var port = 3000;
 
 var server = restify.createServer({
     name: 'raptorjs-samples-api',
