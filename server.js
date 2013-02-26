@@ -39,33 +39,46 @@ function findItemsAdvanced(req, resp, next) {
         url += '&categoryId=' + encodeURIComponent(categoryId);
     }
 
+    var startTime = new Date().getTime();
     request.get(url, function (error, findingResponse, findingBody) {
-        var fail = function() {
-            findingResponse.send(500, 'eBay finding API call failed');
+        var fail = function(message) {
+            resp.send(500, message || 'eBay finding API call failed');
             return next();
         }
 
         if (!error && findingResponse.statusCode == 200) {
-            // Massage the data that comes from the origin eBay service
-            var outputItems = [],
-                items = JSON.parse(findingBody).findItemsAdvancedResponse[0].searchResult[0].item,
-                item,
-                i=0,
-                len=items.length;
+            console.log('Request to "' + url + '" completed in ' + (new Date().getTime() - startTime) + 'ms');
+            console.log('Response body:\n', findingBody + '\n\n');
 
-            for (; i<len; i++) {
-                item = items[i];
+            try {
+                // Massage the data that comes from the origin eBay service
+                var outputItems = [],
+                    items = JSON.parse(findingBody).findItemsAdvancedResponse[0].searchResult[0].item,
+                    item,
+                    i=0,
+                    len=items.length;
 
-                outputItems.push({
-                    title: item.title[0],
-                    viewItemURL: item.viewItemURL[0],
-                    galleryURL: item.galleryURL[0]
-                });
+                for (; i<len; i++) {
+                    item = items[i];
+
+                    if (item.galleryURL && item.title && item.viewItemURL) {
+                        outputItems.push({
+                            title: item.title[0],
+                            viewItemURL: item.viewItemURL[0],
+                            galleryURL: item.galleryURL[0]
+                        });
+                    }
+                }
+
+                output = {
+                    items: outputItems
+                }
+            }
+            catch(e) {
+                console.error(e + ". Stack trace:\n", e.stack);
+                fail(e.toString());
             }
 
-            output = {
-                items: outputItems
-            }
 
             resp.send(output);
             return next();
@@ -85,3 +98,4 @@ server.listen(port);
 
 console.log("Server listening on port " + port);
 console.log("Try: http://localhost:" + port + "/ebay/finding/keywords/nike");
+
