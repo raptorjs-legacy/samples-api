@@ -48,7 +48,7 @@ function findItemsAdvanced(req, resp, next) {
 
         if (!error && findingResponse.statusCode == 200) {
             console.log('Request to "' + url + '" completed in ' + (new Date().getTime() - startTime) + 'ms');
-            console.log('Response body:\n', findingBody + '\n\n');
+            // console.log('Response body:\n', findingBody + '\n\n');
 
             try {
                 // Massage the data that comes from the origin eBay service
